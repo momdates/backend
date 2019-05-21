@@ -3,6 +3,7 @@ package com.momdatrbackend.momdatebuildweek.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,38 +23,59 @@ public class Experiences extends Auditable
     @Column(nullable = false)
     private String explocation;
 
+    @Column
+    private String kids;
+
+    @Column
+    private String dates;
+
+    @Column
+    private String blurb;
+
+    @Column
+    private String availability;
+
     @Column(nullable = false)
     private double price;
+
+    @Column
+    private String expimgurl;
 
 //    @OneToMany(mappedBy = "experiences",
 //    cascade = CascadeType.ALL)
 //    @JsonIgnoreProperties("experiences")
 //    private List<UserExperiences> experiences;
 
-    @ManyToOne
+    @ManyToMany(mappedBy = "experiences")
     @JsonIgnoreProperties("experiences")
-    private User user;
+    private List<User> owner = new ArrayList<>();
 
     public Experiences()
     {
     }
 
-    public Experiences(String title, String expdesc, String explocation, double price)
+    public Experiences(String title, String explocation, String kids, String dates, String blurb, String availability, String expdesc, String expimgurl, double price)
     {
         this.title = title;
         this.expdesc = expdesc;
         this.explocation = explocation;
+        this.kids = kids;
+        this.dates = dates;
+        this.blurb = blurb;
+        this.availability = availability;
         this.price = price;
+        this.expimgurl = expimgurl;
     }
 
-    public long getExpId()
+
+    public String getExpimgurl()
     {
-        return expid;
+        return expimgurl;
     }
 
-    public void setExpId(long expid)
+    public void setExpimgurl(String expimgurl)
     {
-        this.expid = expid;
+        this.expimgurl = expimgurl;
     }
 
     public String getTitle()
@@ -66,7 +88,45 @@ public class Experiences extends Auditable
         this.title = title;
     }
 
+    public String getDates()
+    {
+        return dates;
+    }
 
+    public void setDates(String dates)
+    {
+        this.dates = dates;
+    }
+
+    public String getBlurb()
+    {
+        return blurb;
+    }
+
+    public void setBlurb(String blurb)
+    {
+        this.blurb = blurb;
+    }
+
+    public String getAvailability()
+    {
+        return availability;
+    }
+
+    public void setAvailability(String availability)
+    {
+        this.availability = availability;
+    }
+
+    public String getKids()
+    {
+        return kids;
+    }
+
+    public void setKids(String kids)
+    {
+        this.kids = kids;
+    }
 
     public double getPrice()
     {
@@ -108,13 +168,13 @@ public class Experiences extends Auditable
         this.explocation = explocation;
     }
 
-    public User getUser()
+    public List<User> getOwner()
     {
-        return user;
+        return owner;
     }
 
-    public void setUser(User user)
+    public void setOwner(List<User> owner)
     {
-        this.user = user;
+        this.owner = owner;
     }
 }

@@ -24,6 +24,8 @@ public class UserRoles extends Auditable implements Serializable
     @JsonIgnoreProperties({"userRoles", "hibernateLazyInitializer"})
     private Role role;
 
+
+
     public UserRoles()
     {
     }

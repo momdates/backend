@@ -2,6 +2,7 @@ package com.momdatrbackend.momdatebuildweek.service;
 
 
 
+import com.momdatrbackend.momdatebuildweek.model.Role;
 import com.momdatrbackend.momdatebuildweek.model.User;
 import com.momdatrbackend.momdatebuildweek.model.UserRoles;
 import com.momdatrbackend.momdatebuildweek.repos.RoleRepository;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
+import java.util.*;
 
 
 @Service(value = "userService")
@@ -46,6 +47,14 @@ public class UserServiceImpl implements UserDetailsService, UserService
                 .orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
     }
 
+    @Override
+    public User findCurrent()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userrepos.findByUsername(authentication.getName());
+        return currentUser;
+    }
+
     public ArrayList<User> findAll()
     {
         ArrayList<User> list = new ArrayList<>();
@@ -73,21 +82,16 @@ public class UserServiceImpl implements UserDetailsService, UserService
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
+        newUser.setName(user.getName());
         newUser.setPasswordNoEncrypt(user.getPassword());
         newUser.setLocation(user.getLocation());
         newUser.setZip(user.getZip());
+        newUser.setImgurl(user.getImgurl());
+        newUser.setInterests(user.getInterests());
 
         ArrayList<UserRoles> newRoles = new ArrayList<>();
-        for (UserRoles ur : user.getUserroles())
-        {
-            newRoles.add(new UserRoles(newUser, ur.getRole()));
-        }
-        newUser.setUserroles(newRoles);
-
-//        for (Quote q : user.getQuotes())
-//        {
-//            newUser.getQuotes().add( new Quote(q.getQuote(), newUser));
-//        }
+        Role r = rolerepos.findRoleByName("user");
+        newRoles.add(new UserRoles(newUser, r));
 
         return userrepos.save(newUser);
     }
@@ -113,6 +117,11 @@ public class UserServiceImpl implements UserDetailsService, UserService
                     currentUser.setEmail(user.getEmail());
                 }
 
+                if (user.getName() != null)
+                {
+                    currentUser.setName(user.getName());
+                }
+
                 if (user.getPassword() != null)
                 {
                     currentUser.setPasswordNoEncrypt(user.getPassword());
@@ -126,6 +135,16 @@ public class UserServiceImpl implements UserDetailsService, UserService
                 if (user.getZip() != null)
                 {
                     currentUser.setZip(user.getZip());
+                }
+
+                if (user.getInterests().size() > 0)
+                {
+                    currentUser.setInterests(user.getInterests());
+                }
+
+                if (user.getImgurl() != null)
+                {
+                    currentUser.setImgurl(user.getImgurl());
                 }
 
                 if (user.getUserroles().size() > 0)

@@ -1,14 +1,17 @@
 package com.momdatrbackend.momdatebuildweek.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 
 @Entity
@@ -25,6 +28,15 @@ public class User extends Auditable
     @Column(nullable = false)
     private String email;
 
+    @ElementCollection
+    @CollectionTable(name = "userinterests", joinColumns = @JoinColumn(name = "userid"))
+    @Column(name = "interest")
+    private List<String> interests = new ArrayList<>();
+//    private Set<String> interests = new HashSet<>();
+
+    @Column
+    private String name;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
@@ -34,8 +46,11 @@ public class User extends Auditable
     @Column
     private String zip;
 
+    @Column
+    private String imgurl;
 
 
+    @ApiModelProperty(hidden = true)
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
@@ -46,40 +61,46 @@ public class User extends Auditable
 //    @JsonIgnoreProperties("username")
 //    private List<UserExperiences> experiences = new ArrayList<>();
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(name = "userexperiences",
     joinColumns = {@JoinColumn(name = "userid")},
     inverseJoinColumns = {@JoinColumn(name = "expid")})
-    @JsonIgnoreProperties("user")
+    @JsonIgnoreProperties("owner")
     private List<Experiences> experiences = new ArrayList<>();
 
     public User()
     {
     }
 
-    public User(String username, String email, String password, String location, String zip, List<UserRoles> userroles)
+    public User(String name, String email, String password, String location, String zip, String imgurl,List<String> interests, List<UserRoles> userroles)
     {
-        this.username = username;
+        this.username = email;
+        this.name = name;
         this.email = email;
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(password);
         this.location = location;
         this.zip = zip;
+        this.imgurl = imgurl;
         for (UserRoles ur : userroles)
         {
             ur.setUser(this);
         }
         this.userroles = userroles;
+        this.interests = interests;
     }
 
-    public User(String username, String email, String password, String location, String zip)
+    public User(String name, String email, String password, String location, String zip, String imgurl,List<String> interests)
     {
-        this.username = username;
+        this.username = email;
+        this.name = name;
         this.email = email;
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(password);
         this.location = location;
         this.zip = zip;
+        this.imgurl = imgurl;
+        this.interests = interests;
     }
 
     public List<Experiences> getExperiences()
@@ -102,6 +123,16 @@ public class User extends Auditable
         return location;
     }
 
+    public List<String> getInterests()
+    {
+        return interests;
+    }
+
+    public void setInterests(List<String> interests)
+    {
+        this.interests = interests;
+    }
+
     public void setLocation(String location)
     {
         this.location = location;
@@ -112,6 +143,16 @@ public class User extends Auditable
         this.userid = userid;
     }
 
+    public String getImgurl()
+    {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl)
+    {
+        this.imgurl = imgurl;
+    }
+
     public String getUsername()
     {
         return username;
@@ -119,8 +160,9 @@ public class User extends Auditable
 
     public void setUsername(String username)
     {
-        this.username = username;
+        this.username = email;
     }
+
 
     public String getEmail()
     {
@@ -130,6 +172,7 @@ public class User extends Auditable
     public void setEmail(String email)
     {
         this.email = email;
+        this.username = email;
     }
 
     public String getZip()
@@ -142,32 +185,48 @@ public class User extends Auditable
         this.zip = zip;
     }
 
+    @JsonIgnore
     public String getPassword()
     {
         return password;
     }
 
+    @JsonIgnore
     public List<UserRoles> getUserroles()
     {
         return userroles;
     }
 
+    @JsonIgnore
     public void setUserroles(List<UserRoles> userroles)
     {
         this.userroles = userroles;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    @JsonIgnore
     public void setPassword(String password)
     {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(password);
     }
 
+    @JsonIgnore
     public void setPasswordNoEncrypt(String password)
     {
         this.password = password;
     }
 
+    @JsonIgnore
     public List<SimpleGrantedAuthority> getAuthority()
     {
         List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
@@ -179,4 +238,5 @@ public class User extends Auditable
         }
         return rtnList;
     }
+
 }

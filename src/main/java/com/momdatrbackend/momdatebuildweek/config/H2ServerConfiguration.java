@@ -1,5 +1,4 @@
-package com.momdatrbackend.momdatebuildweek.config;//package com.lambdaschool.school.config;
-//import org.apache.catalina.Server;
+//package com.momdatrbackend.momdatebuildweek.config;//package com.lambdaschool.school.config;
 //import org.h2.tools.Server;
 //import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
