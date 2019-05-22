@@ -77,8 +77,7 @@ public class User extends Auditable
         this.username = email;
         this.name = name;
         this.email = email;
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+        setPassword(password);
         this.location = location;
         this.zip = zip;
         this.imgurl = imgurl;
@@ -95,8 +94,7 @@ public class User extends Auditable
         this.username = email;
         this.name = name;
         this.email = email;
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+        setPassword(password);
         this.location = location;
         this.zip = zip;
         this.imgurl = imgurl;
@@ -213,14 +211,14 @@ public class User extends Auditable
         this.name = name;
     }
 
-    @JsonIgnore
+
     public void setPassword(String password)
     {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(password);
     }
 
-    @JsonIgnore
+
     public void setPasswordNoEncrypt(String password)
     {
         this.password = password;
